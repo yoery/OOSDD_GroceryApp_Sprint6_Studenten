@@ -1,19 +1,25 @@
-﻿using Grocery.Core.Interfaces.Services;
+﻿using System.Collections.ObjectModel;
 using Grocery.Core.Models;
-using System.Collections.ObjectModel;
+using Grocery.Core.Interfaces.Services;
+using Microsoft.Maui.Controls;
 
 namespace Grocery.App.ViewModels
 {
     public class ProductViewModel : BaseViewModel
     {
-        private readonly IProductService _productService;
-        public ObservableCollection<Product> Products { get; set; }
+        public ObservableCollection<Product> Products { get; } = new();
 
         public ProductViewModel(IProductService productService)
         {
-            _productService = productService;
-            Products = [];
-            foreach (Product p in _productService.GetAll()) Products.Add(p);
+            var products = productService.GetAll();
+            foreach (var product in products)
+                Products.Add(product);
+
+            // Subscribe to new product messages
+            MessagingCenter.Subscribe<NewProductViewModel, Product>(this, "ProductAdded", (sender, product) =>
+            {
+                Products.Add(product);
+            });
         }
     }
 }
