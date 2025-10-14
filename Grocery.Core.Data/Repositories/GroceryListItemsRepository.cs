@@ -1,6 +1,6 @@
 ﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Models;
-using Grocery.Core.Data; // Add this using directive
+using Grocery.Core.Data; // Ensure this is present and correct
 using Microsoft.EntityFrameworkCore;
 
 namespace Grocery.Core.Data.Repositories
