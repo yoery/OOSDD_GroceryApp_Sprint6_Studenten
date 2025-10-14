@@ -1,56 +1,64 @@
 ﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Models;
+using Grocery.Core.Data; // Add this using directive
+using Microsoft.EntityFrameworkCore;
 
 namespace Grocery.Core.Data.Repositories
 {
     public class GroceryListItemsRepository : IGroceryListItemsRepository
     {
-        private readonly List<GroceryListItem> groceryListItems;
+        private readonly GroceryAppDb _db;
 
-        public GroceryListItemsRepository()
+        public GroceryListItemsRepository(GroceryAppDb db)
         {
-            groceryListItems = [
-                new GroceryListItem(1, 1, 1, 3),
-                new GroceryListItem(2, 1, 2, 1),
-                new GroceryListItem(3, 1, 3, 4),
-                new GroceryListItem(4, 2, 1, 2),
-                new GroceryListItem(5, 2, 2, 5),
-            ];
+            _db = db;
         }
 
         public List<GroceryListItem> GetAll()
         {
-            return groceryListItems;
+            return _db.GroceryListItems
+                .Include(g => g.Product)
+                .ToList();
         }
 
         public List<GroceryListItem> GetAllOnGroceryListId(int id)
         {
-            return groceryListItems.Where(g => g.GroceryListId == id).ToList();
+            return _db.GroceryListItems
+                .Include(g => g.Product)
+                .Where(g => g.GroceryListId == id)
+                .ToList();
         }
 
         public GroceryListItem Add(GroceryListItem item)
         {
-            int newId = groceryListItems.Max(g => g.Id) + 1;
-            item.Id = newId;
-            groceryListItems.Add(item);
-            return Get(item.Id);
+            _db.GroceryListItems.Add(item);
+            _db.SaveChanges();
+            return Get(item.Id)!;
         }
 
         public GroceryListItem? Delete(GroceryListItem item)
         {
-            throw new NotImplementedException();
+            var entity = _db.GroceryListItems.Find(item.Id);
+            if (entity == null) return null;
+            _db.GroceryListItems.Remove(entity);
+            _db.SaveChanges();
+            return entity;
         }
 
         public GroceryListItem? Get(int id)
         {
-            return groceryListItems.FirstOrDefault(g => g.Id == id);
+            return _db.GroceryListItems
+                .Include(g => g.Product)
+                .FirstOrDefault(g => g.Id == id);
         }
 
         public GroceryListItem? Update(GroceryListItem item)
         {
-            GroceryListItem? listItem = groceryListItems.FirstOrDefault(i => i.Id == item.Id);
-            listItem = item;
-            return listItem;
+            var entity = _db.GroceryListItems.Find(item.Id);
+            if (entity == null) return null;
+            _db.Entry(entity).CurrentValues.SetValues(item);
+            _db.SaveChanges();
+            return Get(item.Id);
         }
     }
 }
