@@ -20,29 +20,17 @@ namespace Grocery.Core.Services
 
         public Product Add(Product item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            // Optionally: validate required fields
-            if (string.IsNullOrWhiteSpace(item.name))
-                throw new ArgumentException("Product name is required.", nameof(item));
-            if (item.Price < 0 || item.Price > 999.99m)
-                throw new ArgumentOutOfRangeException(nameof(item.Price), "Price must be between 0 and 999.99.");
-            if (item.stock < 0)
-                throw new ArgumentOutOfRangeException(nameof(item.stock), "Stock cannot be negative.");
-
-            // Add product via repository
             return _productRepository.Add(item);
         }
 
         public Product? Delete(Product item)
         {
-            throw new NotImplementedException();
+            return _productRepository.Delete(item);
         }
 
         public Product? Get(int id)
         {
-            throw new NotImplementedException();
+            return _productRepository.Get(id);
         }
 
         public Product? Update(Product item)

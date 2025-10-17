@@ -28,7 +28,7 @@ namespace Grocery.App
 #endif
             builder.Services.AddSingleton<IGroceryListService, GroceryListService>();
             builder.Services.AddSingleton<IGroceryListItemsService, GroceryListItemsService>();
-            builder.Services.AddTransient<IProductService, ProductService>();
+            builder.Services.AddSingleton<IProductService, ProductService>();
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IClientService, ClientService>();
             builder.Services.AddSingleton<IFileSaverService, FileSaverService>();
@@ -53,7 +53,6 @@ namespace Grocery.App
             builder.Services.AddTransient<BoughtProductsView>().AddTransient<BoughtProductsViewModel>();
             builder.Services.AddTransient<CategoriesView>().AddTransient<CategoriesViewModel>();
             builder.Services.AddTransient<ProductCategoriesView>().AddTransient<ProductCategoriesViewModel>();
-            builder.Services.AddTransient<NewProductView>().AddTransient<NewProductViewModel>();
             return builder.Build();
         }
     }
